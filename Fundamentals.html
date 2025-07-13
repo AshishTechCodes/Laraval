@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laravel Fundamentals</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-left: 4px solid #3498db;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .note {
+            background-color: #e7f5ff;
+            border-left: 4px solid #4dabf7;
+            padding: 12px;
+            margin: 15px 0;
+        }
+        .command {
+            color: #e83e8c;
+        }
+        .file-structure {
+            font-family: monospace;
+            white-space: pre;
+            line-height: 1.3;
+        }
+        .env-var {
+            color: #e67700;
+        }
+    </style>
+</head>
+<body>
+    <h1>Laravel Fundamentals: Getting Started</h1>
+    <p>Let's begin with the foundational concepts of Laravel. I'll walk you through each fundamental aspect with explanations and practical examples.</p>
+
+    <h2>1. Laravel Installation & Project Setup</h2>
+    <h3>Requirements:</h3>
+    <ul>
+        <li>PHP ≥ 8.1</li>
+        <li>Composer (Dependency Manager)</li>
+        <li>MySQL (or other supported database)</li>
+    </ul>
+
+    <h3>Installation Methods:</h3>
+    <p><strong>Method 1:</strong> Via Laravel Installer</p>
+    <pre><code class="command">composer global require laravel/installer
+laravel new project-name
+cd project-name</code></pre>
+
+    <p><strong>Method 2:</strong> Via Composer Create-Project</p>
+    <pre><code class="command">composer create-project laravel/laravel project-name
+cd project-name</code></pre>
+
+    <p><strong>Method 3:</strong> Using Docker (Sail)</p>
+    <pre><code class="command">curl -s https://laravel.build/example-app | bash
+cd example-app
+./vendor/bin/sail up</code></pre>
+
+    <h2>2. Directory Structure</h2>
+    <p>Here's the key directories you'll work with:</p>
+    <pre class="file-structure">project-name/
+├── app/               # Core application code
+│   ├── Console/       # Artisan commands
+│   ├── Exceptions/    # Exception handlers
+│   ├── Http/          # Controllers, Middleware
+│   ├── Models/        # Eloquent models
+│   └── Providers/     # Service providers
+├── bootstrap/         # Framework bootstrapping
+├── config/           # Configuration files
+├── database/         # Migrations, seeders, factories
+├── public/           # Web root (index.php)
+├── resources/        # Views, JS, CSS, language files
+├── routes/           # Route definitions
+├── storage/          # Logs, compiled views, caches
+├── tests/            # Test cases
+├── vendor/           # Composer dependencies</pre>
+
+    <h2>3. Environment Configuration (.env)</h2>
+    <p>The <code>.env</code> file contains environment-specific configuration. Laravel comes with a <code>.env.example</code> file - copy this to <code>.env</code>:</p>
+    <pre><code class="command">cp .env.example .env</code></pre>
+
+    <p>Key configurations to set:</p>
+    <pre><code class="env-var">APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=  # Generate with: php artisan key:generate
+APP_DEBUG=true
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailhog
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null</code></pre>
+
+    <h2>4. Artisan CLI</h2>
+    <p>Artisan is Laravel's command-line interface. Try these commands:</p>
+
+    <h3>Basic Commands:</h3>
+    <pre><code class="command">php artisan list          # Show all available commands
+php artisan help [command] # Get help for a command
+php artisan serve         # Start development server</code></pre>
+
+    <h3>Application Setup:</h3>
+    <pre><code class="command">php artisan key:generate  # Generate application key
+php artisan storage:link  # Create symbolic link for storage
+php artisan optimize      # Cache framework files</code></pre>
+
+    <h3>Make Commands (Code Generation):</h3>
+    <pre><code class="command">php artisan make:model Post -mcr  # Create model with migration, controller
+php artisan make:controller PostController
+php artisan make:middleware AuthAdmin
+php artisan make:request StorePostRequest
+php artisan make:policy PostPolicy --model=Post</code></pre>
+
+    <h3>Database Commands:</h3>
+    <pre><code class="command">php artisan migrate       # Run migrations
+php artisan migrate:fresh # Drop all tables and re-migrate
+php artisan db:seed       # Run database seeders
+php artisan make:seeder PostsTableSeeder</code></pre>
+
+    <h3>Cache & Debugging:</h3>
+    <pre><code class="command">php artisan route:list    # Show all registered routes
+php artisan view:clear    # Clear compiled views
+php artisan cache:clear   # Clear application cache
+php artisan config:cache  # Cache configuration</code></pre>
+
+    <h3>Tinker (Interactive Shell):</h3>
+    <pre><code class="command">php artisan tinker
+# Then you can interact with your application:
+# >>> $post = new App\Models\Post;
+# >>> $post->title = 'Hello World';
+# >>> $post->save();</code></pre>
+
+    <h2>Practical Exercise</h2>
+    <p>Let's create a simple "Hello World" application to practice these fundamentals:</p>
+
+    <p>Create a new route in <code>routes/web.php</code>:</p>
+    <pre><code class="php">Route::get('/hello', function () {
+    return 'Hello World!';
+});</code></pre>
+
+    <p>Start the development server:</p>
+    <pre><code class="command">php artisan serve</code></pre>
+
+    <p>Visit <code>http://localhost:8000/hello</code> in your browser</p>
+
+    <p>Now let's create a controller:</p>
+    <pre><code class="command">php artisan make:controller HelloController</code></pre>
+
+    <p>Edit <code>app/Http/Controllers/HelloController.php</code>:</p>
+    <pre><code class="php">public function index()
+{
+    return view('hello', ['name' => 'Laravel Learner']);
+}</code></pre>
+
+    <p>Create a view at <code>resources/views/hello.blade.php</code>:</p>
+    <pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Hello&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Hello, {{ $name }}!&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+    <p>Update the route to use the controller:</p>
+    <pre><code class="php">Route::get('/hello', [HelloController::class, 'index']);</code></pre>
+
+    <p>Refresh your browser to see the new output</p>
+
+    <div class="note">
+        <p><strong>Note:</strong> This covers the fundamental setup of a Laravel application. Make sure you have all the prerequisites installed before beginning. The practical exercise demonstrates the MVC (Model-View-Controller) pattern that Laravel follows.</p>
+    </div>
+</body>
+</html>

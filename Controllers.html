@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laravel Controllers: Comprehensive Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            background-color: #e8f4f8;
+            padding: 10px 15px;
+            border-left: 4px solid #3498db;
+            margin-top: 30px;
+        }
+        h3 {
+            margin-top: 20px;
+            color: #2980b9;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border-left: 3px solid #3498db;
+            margin: 15px 0;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .note {
+            background-color: #e7f5ff;
+            border-left: 4px solid #4dabf7;
+            padding: 12px;
+            margin: 15px 0;
+        }
+        .command {
+            color: #e83e8c;
+            font-weight: bold;
+        }
+        .method {
+            color: #d63384;
+        }
+        .route-param {
+            color: #e67700;
+        }
+        .string {
+            color: #2b8a3e;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Laravel Controllers: Comprehensive Guide</h1>
+    <p>Controllers are the central place to handle your application logic. Let's explore them in depth.</p>
+
+    <h2>1. Creating Controllers</h2>
+    <h3>Basic Controller Creation</h3>
+    <p>Generate a new controller:</p>
+    <pre><code class="command">php artisan make:controller UserController</code></pre>
+    <p>This creates <code>app/Http/Controllers/UserController.php</code>:</p>
+    <pre><code class="php">&lt;?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    // Controller methods go here
+}</code></pre>
+
+    <h3>Basic Controller Methods</h3>
+    <pre><code class="php">class UserController extends Controller
+{
+    public function index()
+    {
+        return view('users.index');
+    }
+    
+    public function show($id)
+    {
+        return view('users.show', ['userId' => $id]);
+    }
+}</code></pre>
+
+    <h3>Connecting Routes to Controllers</h3>
+    <pre><code class="php">// routes/web.php
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/{id}', [UserController::class, 'show']);</code></pre>
+
+    <h2>2. Resource Controllers</h2>
+    <h3>Generating Resource Controllers</h3>
+    <pre><code class="command">php artisan make:controller PostController --resource</code></pre>
+    <p>This creates a controller with all resource methods:</p>
+    <pre><code class="php">class PostController extends Controller
+{
+    public function index() {}
+    public function create() {}
+    public function store(Request $request) {}
+    public function show($id) {}
+    public function edit($id) {}
+    public function update(Request $request, $id) {}
+    public function destroy($id) {}
+}</code></pre>
+
+    <h3>Resource Routes</h3>
+    <pre><code class="php">Route::resource('posts', PostController::class);</code></pre>
+    <p>This single line creates all these routes:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Verb</th>
+                <th>URI</th>
+                <th>Action</th>
+                <th>Route Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>GET</td>
+                <td>/posts</td>
+                <td>index</td>
+                <td>posts.index</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/posts/create</td>
+                <td>create</td>
+                <td>posts.create</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td>/posts</td>
+                <td>store</td>
+                <td>posts.store</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/posts/{post}</td>
+                <td>show</td>
+                <td>posts.show</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/posts/{post}/edit</td>
+                <td>edit</td>
+                <td>posts.edit</td>
+            </tr>
+            <tr>
+                <td>PUT/PATCH</td>
+                <td>/posts/{post}</td>
+                <td>update</td>
+                <td>posts.update</td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td>/posts/{post}</td>
+                <td>destroy</td>
+                <td>posts.destroy</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Partial Resource Routes</h3>
+    <pre><code class="php">Route::resource('posts', PostController::class)->only([
+    'index', 'show'
+]);
+
+// Or exclude some methods
+Route::resource('posts', PostController::class)->except([
+    'create', 'store', 'update', 'destroy'
+]);</code></pre>
+
+    <h3>API Resource Controllers</h3>
+    <p>For APIs (excludes create and edit methods):</p>
+    <pre><code class="command">php artisan make:controller PostController --api</code></pre>
+    <pre><code class="php">Route::apiResource('posts', PostController::class);</code></pre>
+
+    <h2>3. Dependency Injection</h2>
+    <h3>Method Injection</h3>
+    <pre><code class="php">public function store(Request $request)
+{
+    $name = $request->input('name');
+    // ...
+}</code></pre>
+
+    <h3>Constructor Injection</h3>
+    <pre><code class="php">private $userService;
+
+public function __construct(UserService $userService)
+{
+    $this->userService = $userService;
+}
+
+public function show($id)
+{
+    $user = $this->userService->find($id);
+    return view('users.show', compact('user'));
+}</code></pre>
+
+    <h3>Route Model Binding</h3>
+    <p>Implicit binding:</p>
+    <pre><code class="php">// Route definition remains the same
+Route::get('/posts/{post}', [PostController::class, 'show']);
+
+// Controller method
+public function show(Post $post) // Model is automatically injected
+{
+    return view('posts.show', compact('post'));
+}</code></pre>
+
+    <p>Custom key for binding:</p>
+    <pre><code class="php">// Use slug instead of ID
+Route::get('/posts/{post:slug}', [PostController::class, 'show']);
+
+// Controller remains the same
+public function show(Post $post)
+{
+    // $post will be retrieved by slug
+}</code></pre>
+
+    <h2>4. Request Handling</h2>
+    <h3>Form Requests</h3>
+    <p>Generate a custom request:</p>
+    <pre><code class="command">php artisan make:request StorePostRequest</code></pre>
+    <p>Edit the request (<code>app/Http/Requests/StorePostRequest.php</code>):</p>
+    <pre><code class="php">public function authorize()
+{
+    return true; // Or add authorization logic
+}
+
+public function rules()
+{
+    return [
+        'title' => 'required|string|max:255',
+        'content' => 'required|string',
+        'published_at' => 'nullable|date',
+    ];
+}</code></pre>
+    <p>Use in controller:</p>
+    <pre><code class="php">public function store(StorePostRequest $request)
+{
+    // Request is already validated
+    $validated = $request->validated();
+    
+    // Create post
+    $post = Post::create($validated);
+    
+    return redirect()->route('posts.show', $post);
+}</code></pre>
+
+    <h3>Handling Different Request Types</h3>
+    <pre><code class="php">public function store(Request $request)
+{
+    // Get all input
+    $input = $request->all();
+    
+    // Get specific input
+    $title = $request->input('title');
+    $title = $request->title; // Alternative syntax
+    
+    // Get input with default
+    $value = $request->input('key', 'default');
+    
+    // Check if input exists
+    if ($request->has('title')) {
+        // ...
+    }
+    
+    // Only get certain inputs
+    $data = $request->only(['title', 'content']);
+    
+    // Get except certain inputs
+    $data = $request->except(['_token']);
+    
+    // Handle JSON requests
+    $name = $request->input('user.name');
+}</code></pre>
+
+    <h3>File Uploads</h3>
+    <pre><code class="php">public function upload(Request $request)
+{
+    $request->validate([
+        'avatar' => 'required|image|max:2048',
+    ]);
+    
+    $path = $request->file('avatar')->store('avatars');
+    
+    // Or with custom filename
+    $path = $request->file('avatar')->storeAs(
+        'avatars', 
+        $request->user()->id.'.'.$request->file('avatar')->extension()
+    );
+    
+    return $path;
+}</code></pre>
+
+    <h2>Complete Controller Example</h2>
+    <p>Here's a complete PostController example:</p>
+    <pre><code class="php">&lt;?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
+use App\Models\Post;
+use Illuminate\Http\Request;
+
+class PostController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth')->except(['index', 'show']);
+    }
+
+    public function index()
+    {
+        $posts = Post::with('user')->latest()->paginate(10);
+        return view('posts.index', compact('posts'));
+    }
+
+    public function create()
+    {
+        return view('posts.create');
+    }
+
+    public function store(StorePostRequest $request)
+    {
+        $post = $request->user()->posts()->create($request->validated());
+        
+        return redirect()
+            ->route('posts.show', $post)
+            ->with('success', 'Post created successfully!');
+    }
+
+    public function show(Post $post)
+    {
+        return view('posts.show', compact('post'));
+    }
+
+    public function edit(Post $post)
+    {
+        $this->authorize('update', $post);
+        return view('posts.edit', compact('post'));
+    }
+
+    public function update(UpdatePostRequest $request, Post $post)
+    {
+        $post->update($request->validated());
+        
+        return redirect()
+            ->route('posts.show', $post)
+            ->with('success', 'Post updated successfully!');
+    }
+
+    public function destroy(Post $post)
+    {
+        $this->authorize('delete', $post);
+        $post->delete();
+        
+        return redirect()
+            ->route('posts.index')
+            ->with('success', 'Post deleted successfully!');
+    }
+}</code></pre>
+
+    <div class="note">
+        <p><strong>Tip:</strong> Controllers should focus on coordinating application flow and delegate business logic to service classes or model methods when possible. This keeps your controllers lean and maintainable.</p>
+    </div>
+</body>
+</html>

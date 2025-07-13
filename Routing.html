@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laravel Routing: Comprehensive Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            background-color: #e8f4f8;
+            padding: 10px 15px;
+            border-left: 4px solid #3498db;
+            margin-top: 30px;
+        }
+        h3 {
+            margin-top: 20px;
+            color: #2980b9;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border-left: 3px solid #3498db;
+            margin: 15px 0;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .note {
+            background-color: #e7f5ff;
+            border-left: 4px solid #4dabf7;
+            padding: 12px;
+            margin: 15px 0;
+        }
+        .command {
+            color: #e83e8c;
+            font-weight: bold;
+        }
+        .method {
+            color: #d63384;
+        }
+        .route-param {
+            color: #e67700;
+        }
+        .string {
+            color: #2b8a3e;
+        }
+    </style>
+</head>
+<body>
+    <h1>Laravel Routing: Comprehensive Guide</h1>
+    <p>Let's dive into Laravel's routing system, one of the most fundamental and powerful features of the framework.</p>
+
+    <h2>1. Basic Routing</h2>
+    <p>All routes are defined in <code>routes/web.php</code> (for web) or <code>routes/api.php</code> (for APIs).</p>
+
+    <h3>Simple Route</h3>
+    <pre><code class="php"><span class="method">Route::get</span>(<span class="string">'/welcome'</span>, <span class="keyword">function</span> () {
+    <span class="keyword">return</span> <span class="string">'Welcome to Laravel!'</span>;
+});</code></pre>
+
+    <h3>Common HTTP Methods</h3>
+    <pre><code class="php"><span class="method">Route::get</span>(<span class="route-var">$uri</span>, <span class="route-var">$callback</span>);
+<span class="method">Route::post</span>(<span class="route-var">$uri</span>, <span class="route-var">$callback</span>);
+<span class="method">Route::put</span>(<span class="route-var">$uri</span>, <span class="route-var">$callback</span>);
+<span class="method">Route::patch</span>(<span class="route-var">$uri</span>, <span class="route-var">$callback</span>);
+<span class="method">Route::delete</span>(<span class="route-var">$uri</span>, <span class="route-var">$callback</span>);
+<span class="method">Route::options</span>(<span class="route-var">$uri</span>, <span class="route-var">$callback</span>);</code></pre>
+
+    <h3>Multiple Methods</h3>
+    <pre><code class="php"><span class="method">Route::match</span>([<span class="string">'get'</span>, <span class="string">'post'</span>], <span class="string">'/contact'</span>, <span class="keyword">function</span> () {
+    <span class="comment">// Handle both GET and POST requests</span>
+});</code></pre>
+
+    <h3>Any Method</h3>
+    <pre><code class="php"><span class="method">Route::any</span>(<span class="string">'/any-request'</span>, <span class="keyword">function</span> () {
+    <span class="comment">// Handle any HTTP method</span>
+});</code></pre>
+
+    <h2>2. Route Parameters</h2>
+    <h3>Required Parameters</h3>
+    <pre><code class="php"><span class="method">Route::get</span>(<span class="string">'/user/{id}'</span>, <span class="keyword">function</span> (<span class="route-var">$id</span>) {
+    <span class="keyword">return</span> <span class="string">'User '</span>.<span class="route-var">$id</span>;
+});</code></pre>
+
+    <h3>Optional Parameters</h3>
+    <pre><code class="php"><span class="method">Route::get</span>(<span class="string">'/user/{name?}'</span>, <span class="keyword">function</span> (<span class="route-var">$name</span> = <span class="string">'Guest'</span>) {
+    <span class="keyword">return</span> <span class="string">'Hello '</span>.<span class="route-var">$name</span>;
+});</code></pre>
+
+    <h3>Regular Expression Constraints</h3>
+    <pre><code class="php"><span class="method">Route::get</span>(<span class="string">'/user/{id}'</span>, <span class="keyword">function</span> (<span class="route-var">$id</span>) {
+    <span class="comment">// Only executed if {id} is numeric</span>
+})-><span class="method">where</span>(<span class="string">'id'</span>, <span class="string">'[0-9]+'</span>);
+
+<span class="method">Route::get</span>(<span class="string">'/post/{slug}'</span>, <span class="keyword">function</span> (<span class="route-var">$slug</span>) {
+    <span class="comment">// Only executed if {slug} matches pattern</span>
+})-><span class="method">where</span>(<span class="string">'slug'</span>, <span class="string">'[A-Za-z\-]+'</span>);</code></pre>
+
+    <h3>Multiple Parameters</h3>
+    <pre><code class="php"><span class="method">Route::get</span>(<span class="string">'/posts/{post}/comments/{comment}'</span>, <span class="keyword">function</span> (<span class="route-var">$postId</span>, <span class="route-var">$commentId</span>) {
+    <span class="comment">// Access both parameters</span>
+});</code></pre>
+
+    <h2>3. Named Routes</h2>
+    <h3>Creating Named Routes</h3>
+    <pre><code class="php"><span class="method">Route::get</span>(<span class="string">'/dashboard'</span>, <span class="keyword">function</span> () {
+    <span class="keyword">return</span> <span class="method">view</span>(<span class="string">'dashboard'</span>);
+})-><span class="method">name</span>(<span class="string">'dashboard'</span>);</code></pre>
+
+    <h3>Generating URLs to Named Routes</h3>
+    <pre><code class="php"><span class="comment">// In controllers</span>
+<span class="route-var">$url</span> = <span class="method">route</span>(<span class="string">'dashboard'</span>);
+
+<span class="comment">// In Blade templates</span>
+&lt;a href=<span class="string">"{{ route('dashboard') }}"</span>&gt;Dashboard&lt;/a&gt;</code></pre>
+
+    <h3>Redirecting to Named Routes</h3>
+    <pre><code class="php"><span class="keyword">return</span> <span class="method">redirect</span>()-><span class="method">route</span>(<span class="string">'dashboard'</span>);</code></pre>
+
+    <h3>Named Routes with Parameters</h3>
+    <pre><code class="php"><span class="method">Route::get</span>(<span class="string">'/user/{id}/profile'</span>, <span class="keyword">function</span> (<span class="route-var">$id</span>) {
+    <span class="comment">// ...</span>
+})-><span class="method">name</span>(<span class="string">'profile'</span>);
+
+<span class="comment">// Generate URL</span>
+<span class="route-var">$url</span> = <span class="method">route</span>(<span class="string">'profile'</span>, [<span class="string">'id'</span> => 1]);</code></pre>
+
+    <h2>4. Route Groups</h2>
+    <h3>Middleware Groups</h3>
+    <pre><code class="php"><span class="method">Route::middleware</span>([<span class="string">'auth'</span>])-><span class="method">group</span>(<span class="keyword">function</span> () {
+    <span class="method">Route::get</span>(<span class="string">'/profile'</span>, <span class="keyword">function</span> () {
+        <span class="comment">// Uses auth middleware</span>
+    });
+    
+    <span class="method">Route::get</span>(<span class="string">'/settings'</span>, <span class="keyword">function</span> () {
+        <span class="comment">// Uses auth middleware</span>
+    });
+});</code></pre>
+
+    <h3>Prefix Groups</h3>
+    <pre><code class="php"><span class="method">Route::prefix</span>(<span class="string">'admin'</span>)-><span class="method">group</span>(<span class="keyword">function</span> () {
+    <span class="method">Route::get</span>(<span class="string">'/users'</span>, <span class="keyword">function</span> () {
+        <span class="comment">// Matches "/admin/users"</span>
+    });
+    
+    <span class="method">Route::get</span>(<span class="string">'/posts'</span>, <span class="keyword">function</span> () {
+        <span class="comment">// Matches "/admin/posts"</span>
+    });
+});</code></pre>
+
+    <h3>Name Prefixes</h3>
+    <pre><code class="php"><span class="method">Route::name</span>(<span class="string">'admin.'</span>)-><span class="method">group</span>(<span class="keyword">function</span> () {
+    <span class="method">Route::get</span>(<span class="string">'/users'</span>, <span class="keyword">function</span> () {
+        <span class="comment">// Route named "admin.users"</span>
+    })-><span class="method">name</span>(<span class="string">'users'</span>);
+});</code></pre>
+
+    <h3>Combined Example</h3>
+    <pre><code class="php"><span class="method">Route::middleware</span>([<span class="string">'auth'</span>])
+     -><span class="method">prefix</span>(<span class="string">'admin'</span>)
+     -><span class="method">name</span>(<span class="string">'admin.'</span>)
+     -><span class="method">group</span>(<span class="keyword">function</span> () {
+         <span class="method">Route::get</span>(<span class="string">'/dashboard'</span>, <span class="keyword">function</span> () {
+             <span class="comment">// Full path: /admin/dashboard</span>
+             <span class="comment">// Name: admin.dashboard</span>
+             <span class="comment">// Middleware: auth</span>
+         })-><span class="method">name</span>(<span class="string">'dashboard'</span>);
+     });</code></pre>
+
+    <h2>5. Middleware</h2>
+    <h3>Assigning Middleware to Routes</h3>
+    <pre><code class="php"><span class="method">Route::get</span>(<span class="string">'/admin'</span>, <span class="keyword">function</span> () {
+    <span class="comment">// Only accessible to admin users</span>
+})-><span class="method">middleware</span>(<span class="string">'auth'</span>, <span class="string">'admin'</span>);</code></pre>
+
+    <h3>Creating Custom Middleware</h3>
+    <p>Generate middleware:</p>
+    <pre><code class="command">php artisan make:middleware CheckAge</code></pre>
+
+    <p>Edit the middleware (<code>app/Http/Middleware/CheckAge.php</code>):</p>
+    <pre><code class="php"><span class="keyword">public function</span> <span class="method">handle</span>(<span class="route-var">$request</span>, <span class="type">Closure</span> <span class="route-var">$next</span>)
+{
+    <span class="keyword">if</span> (<span class="route-var">$request</span>->age <= 200) {
+        <span class="keyword">return</span> <span class="method">redirect</span>(<span class="string">'home'</span>);
+    }
+
+    <span class="keyword">return</span> <span class="method">$next</span>(<span class="route-var">$request</span>);
+}</code></pre>
+
+    <p>Register middleware in <code>app/Http/Kernel.php</code>:</p>
+    <pre><code class="php"><span class="keyword">protected</span> <span class="route-var">$routeMiddleware</span> = [
+    <span class="comment">// ...</span>
+    <span class="string">'age'</span> => \<span class="type">App</span>\<span class="type">Http</span>\<span class="type">Middleware</span>\<span class="type">CheckAge</span>::<span class="keyword">class</span>,
+];</code></pre>
+
+    <p>Use the middleware:</p>
+    <pre><code class="php"><span class="method">Route::get</span>(<span class="string">'/adult-content'</span>, <span class="keyword">function</span> () {
+    <span class="comment">// Only for users with age > 200</span>
+})-><span class="method">middleware</span>(<span class="string">'age'</span>);</code></pre>
+
+    <h3>Middleware Parameters</h3>
+    <pre><code class="php"><span class="comment">// Middleware definition</span>
+<span class="keyword">public function</span> <span class="method">handle</span>(<span class="route-var">$request</span>, <span class="type">Closure</span> <span class="route-var">$next</span>, <span class="route-var">$role</span>)
+{
+    <span class="keyword">if</span> (! <span class="route-var">$request</span>-><span class="method">user</span>()-><span class="method">hasRole</span>(<span class="route-var">$role</span>)) {
+        <span class="comment">// Redirect...</span>
+    }
+    <span class="keyword">return</span> <span class="method">$next</span>(<span class="route-var">$request</span>);
+}
+
+<span class="comment">// Usage</span>
+<span class="method">Route::get</span>(<span class="string">'/admin'</span>, <span class="keyword">function</span> () {
+    <span class="comment">// ...</span>
+})-><span class="method">middleware</span>(<span class="string">'role:admin'</span>);</code></pre>
+
+    <h2>Practical Example: Blog Routes</h2>
+    <p>Let's create a complete routing setup for a blog:</p>
+    <pre><code class="php"><span class="comment">// Public routes</span>
+<span class="method">Route::get</span>(<span class="string">'/'</span>, [<span class="type">PostController</span>::<span class="keyword">class</span>, <span class="string">'index'</span>])-><span class="method">name</span>(<span class="string">'home'</span>);
+<span class="method">Route::get</span>(<span class="string">'/posts/{post:slug}'</span>, [<span class="type">PostController</span>::<span class="keyword">class</span>, <span class="string">'show'</span>])-><span class="method">name</span>(<span class="string">'posts.show'</span>);
+
+<span class="comment">// Authentication routes</span>
+<span class="method">Route::middleware</span>(<span class="string">'guest'</span>)-><span class="method">group</span>(<span class="keyword">function</span> () {
+    <span class="method">Route::get</span>(<span class="string">'/register'</span>, [<span class="type">AuthController</span>::<span class="keyword">class</span>, <span class="string">'showRegister'</span>])-><span class="method">name</span>(<span class="string">'register'</span>);
+    <span class="method">Route::post</span>(<span class="string">'/register'</span>, [<span class="type">AuthController</span>::<span class="keyword">class</span>, <span class="string">'register'</span>]);
+    
+    <span class="method">Route::get</span>(<span class="string">'/login'</span>, [<span class="type">AuthController</span>::<span class="keyword">class</span>, <span class="string">'showLogin'</span>])-><span class="method">name</span>(<span class="string">'login'</span>);
+    <span class="method">Route::post</span>(<span class="string">'/login'</span>, [<span class="type">AuthController</span>::<span class="keyword">class</span>, <span class="string">'login'</span>]);
+});
+
+<span class="comment">// Authenticated user routes</span>
+<span class="method">Route::middleware</span>(<span class="string">'auth'</span>)-><span class="method">group</span>(<span class="keyword">function</span> () {
+    <span class="method">Route::post</span>(<span class="string">'/logout'</span>, [<span class="type">AuthController</span>::<span class="keyword">class</span>, <span class="string">'logout'</span>])-><span class="method">name</span>(<span class="string">'logout'</span>);
+    
+    <span class="comment">// Comment routes</span>
+    <span class="method">Route::post</span>(<span class="string">'/posts/{post}/comments'</span>, [<span class="type">CommentController</span>::<span class="keyword">class</span>, <span class="string">'store'</span>])-><span class="method">name</span>(<span class="string">'comments.store'</span>);
+    
+    <span class="comment">// Admin routes</span>
+    <span class="method">Route::middleware</span>(<span class="string">'can:admin'</span>)-><span class="method">prefix</span>(<span class="string">'admin'</span>)-><span class="method">name</span>(<span class="string">'admin.'</span>)-><span class="method">group</span>(<span class="keyword">function</span> () {
+        <span class="method">Route::resource</span>(<span class="string">'posts'</span>, <span class="type">AdminPostController</span>::<span class="keyword">class</span>)-><span class="method">except</span>(<span class="string">'show'</span>);
+        <span class="method">Route::resource</span>(<span class="string">'users'</span>, <span class="type">UserController</span>::<span class="keyword">class</span>);
+    });
+});
+
+<span class="comment">// API routes</span>
+<span class="method">Route::prefix</span>(<span class="string">'api'</span>)-><span class="method">middleware</span>(<span class="string">'auth:sanctum'</span>)-><span class="method">group</span>(<span class="keyword">function</span> () {
+    <span class="method">Route::apiResource</span>(<span class="string">'posts'</span>, <span class="type">ApiPostController</span>::<span class="keyword">class</span>);
+});</code></pre>
+
+    <div class="note">
+        <p><strong>Tip:</strong> Laravel's routing system is extremely flexible. You can combine middleware, prefixes, and name prefixes to create clean, organized route structures that match your application's architecture.</p>
+    </div>
+</body>
+</html>
