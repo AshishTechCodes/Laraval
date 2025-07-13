@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laravel Views & Blade Templating: Complete Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            background-color: #e8f4f8;
+            padding: 10px 15px;
+            border-left: 4px solid #3498db;
+            margin-top: 30px;
+        }
+        h3 {
+            margin-top: 20px;
+            color: #2980b9;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border-left: 3px solid #3498db;
+            margin: 15px 0;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .note {
+            background-color: #e7f5ff;
+            border-left: 4px solid #4dabf7;
+            padding: 12px;
+            margin: 15px 0;
+        }
+        .command {
+            color: #e83e8c;
+            font-weight: bold;
+        }
+        .directive {
+            color: #d63384;
+        }
+        .blade-var {
+            color: #e67700;
+        }
+        .html-tag {
+            color: #2b8a3e;
+        }
+        .comment {
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Laravel Views & Blade Templating: Complete Guide</h1>
+    <p>Blade is Laravel's powerful templating engine that provides a clean, elegant syntax while allowing you to use plain PHP code when needed.</p>
+
+    <h2>1. Blade Syntax Basics</h2>
+    <h3>Displaying Data</h3>
+    <pre><code class="blade"><span class="html-tag">&lt;!-- Basic variable output --&gt;</span>
+<span class="html-tag">&lt;h1&gt;</span>Hello, <span class="blade-var">{{ $name }}</span>!<span class="html-tag">&lt;/h1&gt;</span>
+
+<span class="html-tag">&lt;!-- Unescaped output (use carefully) --&gt;</span>
+<span class="html-tag">&lt;div&gt;</span><span class="blade-var">{!! $rawHtml !!}</span><span class="html-tag">&lt;/div&gt;</span>
+
+<span class="html-tag">&lt;!-- Default value if variable doesn't exist --&gt;</span>
+<span class="html-tag">&lt;p&gt;</span><span class="blade-var">{{ $variable ?? 'Default value' }}</span><span class="html-tag">&lt;/p&gt;</span></code></pre>
+
+    <h3>Control Structures</h3>
+    <pre><code class="blade"><span class="directive">@if</span> (count($records) === 1)
+    I have one record!
+<span class="directive">@elseif</span> (count($records) > 1)
+    I have multiple records!
+<span class="directive">@else</span>
+    I don't have any records!
+<span class="directive">@endif</span>
+
+<span class="directive">@unless</span> (Auth::check())
+    You are not signed in.
+<span class="directive">@endunless</span>
+
+<span class="directive">@isset</span>($records)
+    Records are set
+<span class="directive">@endisset</span>
+
+<span class="directive">@empty</span>($records)
+    Records are empty
+<span class="directive">@endempty</span></code></pre>
+
+    <h3>Loops</h3>
+    <pre><code class="blade"><span class="directive">@for</span> ($i = 0; $i < 10; $i++)
+    The current value is <span class="blade-var">{{ $i }}</span>
+<span class="directive">@endfor</span>
+
+<span class="directive">@foreach</span> ($users as $user)
+    <span class="html-tag">&lt;p&gt;</span>This is user <span class="blade-var">{{ $user->id }}</span><span class="html-tag">&lt;/p&gt;</span>
+<span class="directive">@endforeach</span>
+
+<span class="directive">@forelse</span> ($users as $user)
+    <span class="html-tag">&lt;li&gt;</span><span class="blade-var">{{ $user->name }}</span><span class="html-tag">&lt;/li&gt;</span>
+<span class="directive">@empty</span>
+    <span class="html-tag">&lt;p&gt;</span>No users<span class="html-tag">&lt;/p&gt;</span>
+<span class="directive">@endforelse</span>
+
+<span class="directive">@while</span> (true)
+    <span class="html-tag">&lt;p&gt;</span>I'm looping forever.<span class="html-tag">&lt;/p&gt;</span>
+<span class="directive">@endwhile</span></code></pre>
+
+    <h2>2. Template Inheritance</h2>
+    <h3>Master Layout (resources/views/layouts/app.blade.php)</h3>
+    <pre><code class="blade"><span class="html-tag">&lt;!DOCTYPE html&gt;</span>
+<span class="html-tag">&lt;html</span> <span class="html-tag">lang=</span><span class="string">"en"</span><span class="html-tag">&gt;</span>
+<span class="html-tag">&lt;head&gt;</span>
+    <span class="html-tag">&lt;meta</span> <span class="html-tag">charset=</span><span class="string">"UTF-8"</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;meta</span> <span class="html-tag">name=</span><span class="string">"viewport"</span> <span class="html-tag">content=</span><span class="string">"width=device-width, initial-scale=1.0"</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;title&gt;</span><span class="directive">@yield</span>(<span class="string">'title'</span>, <span class="string">'My App'</span>)<span class="html-tag">&lt;/title&gt;</span>
+    <span class="directive">@stack</span>(<span class="string">'styles'</span>)
+<span class="html-tag">&lt;/head&gt;</span>
+<span class="html-tag">&lt;body&gt;</span>
+    <span class="html-tag">&lt;div</span> <span class="html-tag">class=</span><span class="string">"container"</span><span class="html-tag">&gt;</span>
+        <span class="directive">@include</span>(<span class="string">'partials.header'</span>)
+        
+        <span class="directive">@yield</span>(<span class="string">'content'</span>)
+        
+        <span class="directive">@include</span>(<span class="string">'partials.footer'</span>)
+    <span class="html-tag">&lt;/div&gt;</span>
+    
+    <span class="directive">@stack</span>(<span class="string">'scripts'</span>)
+<span class="html-tag">&lt;/body&gt;</span>
+<span class="html-tag">&lt;/html&gt;</span></code></pre>
+
+    <h3>Child View (resources/views/home.blade.php)</h3>
+    <pre><code class="blade"><span class="directive">@extends</span>(<span class="string">'layouts.app'</span>)
+
+<span class="directive">@section</span>(<span class="string">'title'</span>, <span class="string">'Home Page'</span>)
+
+<span class="directive">@push</span>(<span class="string">'styles'</span>)
+    <span class="html-tag">&lt;link</span> <span class="html-tag">rel=</span><span class="string">"stylesheet"</span> <span class="html-tag">href=</span><span class="string">"/css/home.css"</span><span class="html-tag">&gt;</span>
+<span class="directive">@endpush</span>
+
+<span class="directive">@section</span>(<span class="string">'content'</span>)
+    <span class="html-tag">&lt;h1&gt;</span>Welcome to our website!<span class="html-tag">&lt;/h1&gt;</span>
+    
+    <span class="directive">@include</span>(<span class="string">'partials.featured-posts'</span>, [<span class="string">'posts'</span> => $featuredPosts])
+<span class="directive">@endsection</span>
+
+<span class="directive">@push</span>(<span class="string">'scripts'</span>)
+    <span class="html-tag">&lt;script</span> <span class="html-tag">src=</span><span class="string">"/js/home.js"</span><span class="html-tag">&gt;&lt;/script&gt;</span>
+<span class="directive">@endpush</span></code></pre>
+
+    <h3>Includes (resources/views/partials/header.blade.php)</h3>
+    <pre><code class="blade"><span class="html-tag">&lt;header&gt;</span>
+    <span class="html-tag">&lt;nav&gt;</span>
+        <span class="html-tag">&lt;a</span> <span class="html-tag">href=</span><span class="string">"/"</span><span class="html-tag">&gt;</span>Home<span class="html-tag">&lt;/a&gt;</span>
+        <span class="html-tag">&lt;a</span> <span class="html-tag">href=</span><span class="string">"/about"</span><span class="html-tag">&gt;</span>About<span class="html-tag">&lt;/a&gt;</span>
+        <span class="html-tag">&lt;a</span> <span class="html-tag">href=</span><span class="string">"/contact"</span><span class="html-tag">&gt;</span>Contact<span class="html-tag">&lt;/a&gt;</span>
+    <span class="html-tag">&lt;/nav&gt;</span>
+<span class="html-tag">&lt;/header&gt;</span></code></pre>
+
+    <h2>3. Components</h2>
+    <h3>Creating Components</h3>
+    <pre><code class="command">php artisan make:component Alert
+php artisan make:component Forms/Input --inline</code></pre>
+
+    <h3>Class-Based Component (app/View/Components/Alert.php)</h3>
+    <pre><code class="php"><span class="keyword">class</span> <span class="type">Alert</span> <span class="keyword">extends</span> <span class="type">Component</span>
+{
+    <span class="keyword">public</span> <span class="var">$type</span>;
+    <span class="keyword">public</span> <span class="var">$message</span>;
+    
+    <span class="keyword">public function</span> <span class="method">__construct</span>(<span class="var">$type</span> = <span class="string">'info'</span>, <span class="var">$message</span> = <span class="keyword">null</span>)
+    {
+        <span class="var">$this</span>->type = <span class="var">$type</span>;
+        <span class="var">$this</span>->message = <span class="var">$message</span>;
+    }
+    
+    <span class="keyword">public function</span> <span class="method">render</span>()
+    {
+        <span class="keyword">return</span> <span class="method">view</span>(<span class="string">'components.alert'</span>);
+    }
+}</code></pre>
+
+    <h3>Component Template (resources/views/components/alert.blade.php)</h3>
+    <pre><code class="blade"><span class="html-tag">&lt;div</span> <span class="html-tag">class=</span><span class="string">"alert alert-</span><span class="blade-var">{{ $type }}</span><span class="string">"</span><span class="html-tag">&gt;</span>
+    <span class="blade-var">{{ $message ?? $slot }}</span>
+<span class="html-tag">&lt;/div&gt;</span></code></pre>
+
+    <h3>Using Components</h3>
+    <pre><code class="blade"><span class="html-tag">&lt;x-alert</span> <span class="html-tag">type=</span><span class="string">"error"</span> <span class="html-tag">message=</span><span class="string">"Something went wrong!"</span> <span class="html-tag">/&gt;</span>
+
+<span class="html-tag">&lt;x-alert</span> <span class="html-tag">type=</span><span class="string">"success"</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;strong&gt;</span>Success!<span class="html-tag">&lt;/strong&gt;</span> Your action was completed.
+<span class="html-tag">&lt;/x-alert&gt;</span></code></pre>
+
+    <h3>Anonymous Components</h3>
+    <pre><code class="blade"><span class="html-tag">&lt;!-- resources/views/components/input.blade.php --&gt;</span>
+<span class="html-tag">&lt;input</span> <span class="html-tag">type=</span><span class="string">"</span><span class="blade-var">{{ $type }}</span><span class="string">"</span> <span class="html-tag">name=</span><span class="string">"</span><span class="blade-var">{{ $name }}</span><span class="string">"</span> <span class="html-tag">class=</span><span class="string">"form-control </span><span class="blade-var">{{ $class }}</span><span class="string">"</span><span class="html-tag">&gt;</span>
+
+<span class="html-tag">&lt;!-- Usage --&gt;</span>
+<span class="html-tag">&lt;x-input</span> <span class="html-tag">type=</span><span class="string">"text"</span> <span class="html-tag">name=</span><span class="string">"username"</span> <span class="html-tag">class=</span><span class="string">"mb-4"</span> <span class="html-tag">/&gt;</span></code></pre>
+
+    <h2>4. Directives</h2>
+    <h3>Custom Directives</h3>
+    <p>Register in AppServiceProvider:</p>
+    <pre><code class="php"><span class="keyword">use</span> <span class="type">Illuminate\Support\Facades\Blade</span>;
+
+<span class="keyword">public function</span> <span class="method">boot</span>()
+{
+    <span class="type">Blade</span>::<span class="method">directive</span>(<span class="string">'datetime'</span>, <span class="keyword">function</span> (<span class="var">$expression</span>) {
+        <span class="keyword">return</span> <span class="string">"&lt;?php echo ($expression)->format('m/d/Y H:i'); ?&gt;"</span>;
+    });
+    
+    <span class="type">Blade</span>::<span class="method">if</span>(<span class="string">'env'</span>, <span class="keyword">function</span> (<span class="var">$environment</span>) {
+        <span class="keyword">return</span> <span class="method">app</span>()-><span class="method">environment</span>(<span class="var">$environment</span>);
+    });
+}</code></pre>
+
+    <h3>Using Custom Directives</h3>
+    <pre><code class="blade"><span class="directive">@datetime</span>($post->created_at)
+
+<span class="directive">@env</span>(<span class="string">'local'</span>)
+    <span class="html-tag">&lt;p&gt;</span>This is the local environment!<span class="html-tag">&lt;/p&gt;</span>
+<span class="directive">@elseenv</span>(<span class="string">'production'</span>)
+    <span class="html-tag">&lt;p&gt;</span>This is production!<span class="html-tag">&lt;/p&gt;</span>
+<span class="directive">@else</span>
+    <span class="html-tag">&lt;p&gt;</span>This is not local or production<span class="html-tag">&lt;/p&gt;</span>
+<span class="directive">@endenv</span></code></pre>
+
+    <h3>Built-in Directives</h3>
+    <pre><code class="blade"><span class="directive">@auth</span>
+    <span class="html-tag">&lt;!-- User is authenticated --&gt;</span>
+<span class="directive">@endauth</span>
+
+<span class="directive">@guest</span>
+    <span class="html-tag">&lt;!-- User is not authenticated --&gt;</span>
+<span class="directive">@endguest</span>
+
+<span class="directive">@can</span>(<span class="string">'update'</span>, $post)
+    <span class="html-tag">&lt;!-- User can update the post --&gt;</span>
+<span class="directive">@elsecan</span>(<span class="string">'create'</span>, <span class="type">App\Models\Post</span>::<span class="keyword">class</span>)
+    <span class="html-tag">&lt;!-- User can create posts --&gt;</span>
+<span class="directive">@endcan</span>
+
+<span class="directive">@error</span>(<span class="string">'email'</span>)
+    <span class="html-tag">&lt;div</span> <span class="html-tag">class=</span><span class="string">"alert alert-danger"</span><span class="html-tag">&gt;</span><span class="blade-var">{{ $message }}</span><span class="html-tag">&lt;/div&gt;</span>
+<span class="directive">@enderror</span></code></pre>
+
+    <h2>5. Forms & CSRF Protection</h2>
+    <h3>Basic Form</h3>
+    <pre><code class="blade"><span class="html-tag">&lt;form</span> <span class="html-tag">method=</span><span class="string">"POST"</span> <span class="html-tag">action=</span><span class="string">"/posts"</span><span class="html-tag">&gt;</span>
+    <span class="directive">@csrf</span>
+    
+    <span class="html-tag">&lt;div</span> <span class="html-tag">class=</span><span class="string">"form-group"</span><span class="html-tag">&gt;</span>
+        <span class="html-tag">&lt;label</span> <span class="html-tag">for=</span><span class="string">"title"</span><span class="html-tag">&gt;</span>Title<span class="html-tag">&lt;/label&gt;</span>
+        <span class="html-tag">&lt;input</span> <span class="html-tag">type=</span><span class="string">"text"</span> <span class="html-tag">id=</span><span class="string">"title"</span> <span class="html-tag">name=</span><span class="string">"title"</span> 
+               <span class="html-tag">class=</span><span class="string">"form-control </span><span class="directive">@error</span>(<span class="string">'title'</span>) is-invalid <span class="directive">@enderror</span><span class="string">"</span>
+               <span class="html-tag">value=</span><span class="string">"</span><span class="blade-var">{{ old('title') }}</span><span class="string">"</span><span class="html-tag">&gt;</span>
+        <span class="directive">@error</span>(<span class="string">'title'</span>)
+            <span class="html-tag">&lt;div</span> <span class="html-tag">class=</span><span class="string">"invalid-feedback"</span><span class="html-tag">&gt;</span><span class="blade-var">{{ $message }}</span><span class="html-tag">&lt;/div&gt;</span>
+        <span class="directive">@enderror</span>
+    <span class="html-tag">&lt;/div&gt;</span>
+    
+    <span class="html-tag">&lt;div</span> <span class="html-tag">class=</span><span class="string">"form-group"</span><span class="html-tag">&gt;</span>
+        <span class="html-tag">&lt;label</span> <span class="html-tag">for=</span><span class="string">"body"</span><span class="html-tag">&gt;</span>Content<span class="html-tag">&lt;/label&gt;</span>
+        <span class="html-tag">&lt;textarea</span> <span class="html-tag">id=</span><span class="string">"body"</span> <span class="html-tag">name=</span><span class="string">"body"</span> 
+                  <span class="html-tag">class=</span><span class="string">"form-control </span><span class="directive">@error</span>(<span class="string">'body'</span>) is-invalid <span class="directive">@enderror</span><span class="string">"</span><span class="html-tag">&gt;</span><span class="blade-var">{{ old('body') }}</span><span class="html-tag">&lt;/textarea&gt;</span>
+        <span class="directive">@error</span>(<span class="string">'body'</span>)
+            <span class="html-tag">&lt;div</span> <span class="html-tag">class=</span><span class="string">"invalid-feedback"</span><span class="html-tag">&gt;</span><span class="blade-var">{{ $message }}</span><span class="html-tag">&lt;/div&gt;</span>
+        <span class="directive">@enderror</span>
+    <span class="html-tag">&lt;/div&gt;</span>
+    
+    <span class="html-tag">&lt;button</span> <span class="html-tag">type=</span><span class="string">"submit"</span> <span class="html-tag">class=</span><span class="string">"btn btn-primary"</span><span class="html-tag">&gt;</span>Submit<span class="html-tag">&lt;/button&gt;</span>
+<span class="html-tag">&lt;/form&gt;</span></code></pre>
+
+    <h3>Form Components</h3>
+    <pre><code class="blade"><span class="html-tag">&lt;x-form</span> <span class="html-tag">action=</span><span class="string">"/posts"</span> <span class="html-tag">method=</span><span class="string">"POST"</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;x-input</span> <span class="html-tag">name=</span><span class="string">"title"</span> <span class="html-tag">label=</span><span class="string">"Title"</span> <span class="html-tag">:value=</span><span class="string">"old('title')"</span> <span class="html-tag">required</span> <span class="html-tag">/&gt;</span>
+    <span class="html-tag">&lt;x-textarea</span> <span class="html-tag">name=</span><span class="string">"body"</span> <span class="html-tag">label=</span><span class="string">"Content"</span><span class="html-tag">&gt;</span><span class="blade-var">{{ old('body') }}</span><span class="html-tag">&lt;/x-textarea&gt;</span>
+    <span class="html-tag">&lt;x-select</span> <span class="html-tag">name=</span><span class="string">"category_id"</span> <span class="html-tag">label=</span><span class="string">"Category"</span> <span class="html-tag">:options=</span><span class="string">"$categories"</span> <span class="html-tag">:selected=</span><span class="string">"old('category_id')"</span> <span class="html-tag">/&gt;</span>
+    <span class="html-tag">&lt;x-checkbox</span> <span class="html-tag">name=</span><span class="string">"published"</span> <span class="html-tag">label=</span><span class="string">"Publish?"</span> <span class="html-tag">:checked=</span><span class="string">"old('published', false)"</span> <span class="html-tag">/&gt;</span>
+    <span class="html-tag">&lt;x-button&gt;</span>Submit<span class="html-tag">&lt;/x-button&gt;</span>
+<span class="html-tag">&lt;/x-form&gt;</span></code></pre>
+
+    <h3>File Uploads</h3>
+    <pre><code class="blade"><span class="html-tag">&lt;form</span> <span class="html-tag">method=</span><span class="string">"POST"</span> <span class="html-tag">action=</span><span class="string">"/avatar"</span> <span class="html-tag">enctype=</span><span class="string">"multipart/form-data"</span><span class="html-tag">&gt;</span>
+    <span class="directive">@csrf</span>
+    <span class="directive">@method</span>(<span class="string">'PUT'</span>)
+    
+    <span class="html-tag">&lt;input</span> <span class="html-tag">type=</span><span class="string">"file"</span> <span class="html-tag">name=</span><span class="string">"avatar"</span><span class="html-tag">&gt;</span>
+    
+    <span class="html-tag">&lt;button</span> <span class="html-tag">type=</span><span class="string">"submit"</span><span class="html-tag">&gt;</span>Update Avatar<span class="html-tag">&lt;/button&gt;</span>
+<span class="html-tag">&lt;/form&gt;</span></code></pre>
+
+    <h3>CSRF Protection</h3>
+    <p><code>@csrf</code> directive adds hidden CSRF token field</p>
+    <p>For APIs, use VerifyCsrfToken middleware or Sanctum</p>
+
+    <h3>Form Method Spoofing</h3>
+    <pre><code class="blade"><span class="html-tag">&lt;form</span> <span class="html-tag">action=</span><span class="string">"/posts/1"</span> <span class="html-tag">method=</span><span class="string">"POST"</span><span class="html-tag">&gt;</span>
+    <span class="directive">@csrf</span>
+    <span class="directive">@method</span>(<span class="string">'PUT'</span>) <span class="html-tag">&lt;!-- Will be converted to PUT request --&gt;</span>
+    
+    <span class="html-tag">&lt;!-- Form fields --&gt;</span>
+<span class="html-tag">&lt;/form&gt;</span></code></pre>
+
+    <h2>Practical Example: Blog Post Views</h2>
+    <h3>Show View (resources/views/posts/show.blade.php)</h3>
+    <pre><code class="blade"><span class="directive">@extends</span>(<span class="string">'layouts.app'</span>)
+
+<span class="directive">@section</span>(<span class="string">'title'</span>, <span class="blade-var">$post->title</span>)
+
+<span class="directive">@section</span>(<span class="string">'content'</span>)
+    <span class="html-tag">&lt;article&gt;</span>
+        <span class="html-tag">&lt;h1&gt;</span><span class="blade-var">{{ $post->title }}</span><span class="html-tag">&lt;/h1&gt;</span>
+        
+        <span class="html-tag">&lt;div</span> <span class="html-tag">class=</span><span class="string">"meta"</span><span class="html-tag">&gt;</span>
+            By <span class="blade-var">{{ $post->author->name }}</span> | 
+            <span class="directive">@datetime</span>(<span class="blade-var">$post->published_at</span>)
+        <span class="html-tag">&lt;/div&gt;</span>
+        
+        <span class="html-tag">&lt;div</span> <span class="html-tag">class=</span><span class="string">"content"</span><span class="html-tag">&gt;</span>
+            <span class="blade-var">{!! $post->content !!}</span>
+        <span class="html-tag">&lt;/div&gt;</span>
+    <span class="html-tag">&lt;/article&gt;</span>
+    
+    <span class="html-tag">&lt;section</span> <span class="html-tag">class=</span><span class="string">"comments"</span><span class="html-tag">&gt;</span>
+        <span class="html-tag">&lt;h2&gt;</span>Comments<span class="html-tag">&lt;/h2&gt;</span>
+        
+        <span class="directive">@forelse</span> (<span class="blade-var">$post->comments</span> as <span class="blade-var">$comment</span>)
+            <span class="html-tag">&lt;x-comment</span> <span class="html-tag">:comment=</span><span class="string">"$comment"</span> <span class="html-tag">/&gt;</span>
+        <span class="directive">@empty</span>
+            <span class="html-tag">&lt;p&gt;</span>No comments yet.<span class="html-tag">&lt;/p&gt;</span>
+        <span class="directive">@endforelse</span>
+        
+        <span class="directive">@auth</span>
+            <span class="html-tag">&lt;x-comment-form</span> <span class="html-tag">:post=</span><span class="string">"$post"</span> <span class="html-tag">/&gt;</span>
+        <span class="directive">@else</span>
+            <span class="html-tag">&lt;p&gt;</span><span class="html-tag">&lt;a</span> <span class="html-tag">href=</span><span class="string">"</span><span class="blade-var">{{ route('login') }}</span><span class="string">"</span><span class="html-tag">&gt;</span>Sign in<span class="html-tag">&lt;/a&gt;</span> to leave a comment.<span class="html-tag">&lt;/p&gt;</span>
+        <span class="directive">@endauth</span>
+    <span class="html-tag">&lt;/section&gt;</span>
+<span class="directive">@endsection</span></code></pre>
+
+    <h3>Comment Component (resources/views/components/comment.blade.php)</h3>
+    <pre><code class="blade"><span class="html-tag">&lt;div</span> <span class="html-tag">class=</span><span class="string">"comment"</span><span class="html-tag">&gt;</span>
+    <span class="html-tag">&lt;div</span> <span class="html-tag">class=</span><span class="string">"comment-header"</span><span class="html-tag">&gt;</span>
+        <span class="html-tag">&lt;strong&gt;</span><span class="blade-var">{{ $comment->user->name }}</span><span class="html-tag">&lt;/strong&gt;</span>
+        <span class="html-tag">&lt;span&gt;</span><span class="directive">@datetime</span>(<span class="blade-var">$comment->created_at</span>)<span class="html-tag">&lt;/span&gt;</span>
+    <span class="html-tag">&lt;/div&gt;</span>
+    <span class="html-tag">&lt;div</span> <span class="html-tag">class=</span><span class="string">"comment-body"</span><span class="html-tag">&gt;</span>
+        <span class="blade-var">{{ $comment->body }}</span>
+    <span class="html-tag">&lt;/div&gt;</span>
+    
+    <span class="directive">@can</span>(<span class="string">'delete'</span>, <span class="blade-var">$comment</span>)
+        <span class="html-tag">&lt;form</span> <span class="html-tag">method=</span><span class="string">"POST"</span> <span class="html-tag">action=</span><span class="string">"</span><span class="blade-var">{{ route('comments.destroy', $comment) }}</span><span class="string">"</span><span class="html-tag">&gt;</span>
+            <span class="directive">@csrf</span>
+            <span class="directive">@method</span>(<span class="string">'DELETE'</span>)
+            <span class="html-tag">&lt;button</span> <span class="html-tag">type=</span><span class="string">"submit"</span> <span class="html-tag">class=</span><span class="string">"btn btn-sm btn-danger"</span><span class="html-tag">&gt;</span>Delete<span class="html-tag">&lt;/button&gt;</span>
+        <span class="html-tag">&lt;/form&gt;</span>
+    <span class="directive">@endcan</span>
+<span class="html-tag">&lt;/div&gt;</span></code></pre>
+
+    <div class="note">
+        <p><strong>Tip:</strong> Blade templates compile to plain PHP code and are cached, so they're very efficient. Use components and directives to keep your templates DRY and maintainable.</p>
+    </div>
+</body>
+</html>
